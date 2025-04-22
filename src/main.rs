@@ -26,8 +26,8 @@ async  fn main() -> io::Result<()>{
         .unwrap();
     //查询语句与结果
     let course_rowdata = sqlx::query!(
-        r#"select * from xxz where id = $1"#,
-        1
+        r#"select id, teacher_id, name,date from course where id = $1"#,
+        2
     )
     .fetch_all(&data_pool)
     .await
