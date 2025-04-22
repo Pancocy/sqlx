@@ -1,16 +1,15 @@
 use::std::io;
 use::std::env;
 use dotenv::dotenv;
-use::chrono::NaiveDateTime;
 use::sqlx::postgres::PgPoolOptions;
-
+use chrono::NaiveDate;
 
 #[derive(Debug)]
 pub struct Course{
     pub id: i32,
     pub teacher_id: i32,
     pub name: String,
-    pub time: Option<NaiveDateTime>
+    pub time: Option<NaiveDate>
 }
 
 #[actix_rt::main]
@@ -27,24 +26,25 @@ async  fn main() -> io::Result<()>{
         .unwrap();
     //查询语句与结果
     let course_rowdata = sqlx::query!(
-        r#"select id,teacher_id,name,time from course where id = $1"#,
-        2
+        r#"select * from xxz where id = $1"#,
+        1
     )
     .fetch_all(&data_pool)
     .await
     .unwrap();
 
+    println!("{:?}",course_rowdata);
     //存储并输出数据
     let mut course_list = vec![];
     for row in course_rowdata {
         course_list.push(Course{
             id:row.id,
-            teacher_id:row.teacher_id,
-            name:row.name,
-            time:Some(NaiveDateTime::from(row.time.unwrap())),
+            teacher_id:row.teacher_id.unwrap(),
+            name:row.name.unwrap(),
+            time:row.date,
         })
     }
-    println!("counses = {:?}",course_list);
+    println!("courses = {:?}",course_list);
     Ok(())
 }
 
